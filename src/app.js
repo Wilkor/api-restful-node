@@ -12,7 +12,7 @@ io.on('connection', socket => {
         data.products.forEach(product => {
            socket.leave(product);
             socket.join(product);
-            io.to(product).emit("broadcastMessage", io.sockets.adapter.rooms);
+            socket.emit("broadcastMessage",'Você recebeu um aviso!');
             console.log(io.sockets.adapter.rooms)
         });
 
