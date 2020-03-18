@@ -1,31 +1,85 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const  config =  require('./config')
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
-const app = express();
-const router = express.Router();
+const documents = {};
 
-// carrega banco
-mongoose.connect(config.conectionString);
+io.on('connection', socket => {
 
 
-//carrega model product
+  socket.on("notification", data =>{
+    if(data.profileType === "admin"){
+        data.products.forEach(product => {
+           socket.leave(product);
+            socket.join(product);
+            io.to(product).emit("broadcastMessage", io.sockets.adapter.rooms);
+            console.log(io.sockets.adapter.rooms)
+        });
 
-const Product = require('../src/models/product');
-const Customer = require('../src/models/customer');
-const Order = require('../src/models/order');
-const  indexRoutes = require('../src/rotas/index');
-const  productRoutes = require('../src/rotas/products');
-const  customerRoutes = require('../src/rotas/customer');
+    } else {
+        socket.to("admin").emit("broadcastMessage");
+    }
+});
+//     let previousId;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+//     const safeJoin = currentId => {
+//         socket.leave(previousId);
+//         socket.join(currentId);
+//         previousId = currentId;
+//     }
 
+//     socket.on('getDoc', docId => {
+//         safeJoin(docId);
+//         socket.emit('document', documents[docId]);
+//     });
 
+//     socket.on('addDoc', doc => {
 
-app.use('/', indexRoutes);
-app.use('/products', productRoutes);
-app.use('/customer', customerRoutes);
+//       if(doc.profileType === "admin"){
+//         doc.products.forEach(product => {
+//               socket.to(product).emit("broadcastMessage", 'você recebu um aviso, verifique!');
+//           });
+//           console.log('sala', socket.rooms)
+//       } else {
+//           socket.to("admin").emit("broadcastMessage");
+//       }
 
-app.listen(3000);
+//         //io.emit('broadcastMessage', Object.keys(doc));
+//        // socket.emit('broadcastMessage', doc);
+
+//     });
+
+//     socket.on('editDoc', doc => {
+//         documents[doc.id] = doc;
+//         socket.to(doc.id).emit('document', 'doc');
+
+//     });
+
+//     socket.on("login", doc => {
+//       if(doc.profileType === "admin"){
+//         doc.products.forEach(product => {
+//               safeJoin(product);
+//           });
+//       } else {
+//           socket.to("admin").emit("broadcastMessage");
+//       }
+//   });
+//   socket.on("notification", data =>{
+
+//     if(data.profileType != "admin"){
+//         data.products.forEach(product => {
+//             safeJoin(product);
+//             socket.to(product).emit("broadcastMessage");
+//         });
+//     } else {
+//         socket.to("admin").emit("broadcastMessage");
+//     }
+// });
+//     io.emit('documents', Object.keys(documents));
+
+//     console.log(`Socket ${socket.id} has connected`);
+});
+
+http.listen(4444, () => {
+    console.log('Listening on port 4444');
+});
