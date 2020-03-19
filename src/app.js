@@ -5,7 +5,14 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const connectedUser = {}
-    
+
+io.origins((origin, callback) => {
+  if (origin !== 'http://localhost:4200/') {
+    return callback('origin not allowed', false);
+  }
+  callback(null, true);
+});
+
 io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
