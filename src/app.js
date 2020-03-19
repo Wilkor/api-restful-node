@@ -2,8 +2,8 @@ const app = require('express')();
 const http = require('http').Server(app, { origins: '*:*'});
 const io = require('socket.io')(http);
 
-// server heroku https://doc-sockets.herokuapp.com/
-io.set('origins', 'https://portalspa-ti.safra.com.br');
+io.origins(['https://portalspa-ti.safra.com.br']);
+
 io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
