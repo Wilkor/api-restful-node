@@ -1,17 +1,9 @@
-const app = require('express')();
-const http = require('http').Server(app, {
-    handlePreflightRequest: (req, res) => {
-        const headers = {
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Allow-Origin": "*", //or the specific origin you want to give access to,
-            "Access-Control-Allow-Credentials": true
-        };
-        res.writeHead(200, headers);
-        res.end();
-    }
-});
+const express = require("express");
+const app = express();
+const http = require('http').Server(app);
 const io = require('socket.io')(http);
-
+const cors = require('cors');
+const connectedUser = {}
 
 io.on('connection', socket => {
   socket.on("notification", data =>{
@@ -39,6 +31,9 @@ io.on('connection', socket => {
 
 });
 
+
+app.use(cors())
+app.use(express.json())
 http.listen(process.env.PORT || 3000, () => {
     console.log('Listening on port 4444');
 });
