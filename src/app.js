@@ -1,9 +1,6 @@
 const app = require('express')();
-const http = require('http').Server(app, { origins: '*:*'});
+const http = require('http').Server(app, { origins: 'https://portalspa-ti.safra.com.br/'});
 const io = require('socket.io')(http);
-
-io.origins(['https://portalspa-ti.safra.com.br']);
-
 io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
