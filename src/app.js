@@ -3,7 +3,7 @@ const http = require('http').Server(app, { origins: ['https://portalspa-ti.safra
 const io = require('socket.io')(http);
 var cors = require('cors')
 
-var whitelist = ['https://portalspa-ti.safra.com.br/', 'localhost:4200']
+var whitelist = ['https://portalspa-ti.safra.com.br', 'localhost:4200']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
