@@ -1,9 +1,12 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-const cors = require('cors');
+
 // server heroku https://doc-sockets.herokuapp.com/
-app.use(cors());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
