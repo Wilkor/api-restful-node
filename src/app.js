@@ -1,7 +1,18 @@
 const express = require("express");
 const app = express();
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+
+var options = {
+        allowUpgrades: true,
+        transports: [ 'polling', 'websocket' ],
+        pingTimeout: 9000,
+        pingInterval: 3000,
+        cookie: 'mycookie',
+        httpCompression: true,
+        origins: '*:*' 
+};
+
+const io = require('socket.io')(http, options);
 const cors = require('cors');
 const connectedUser = {}
 
