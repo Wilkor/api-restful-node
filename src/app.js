@@ -16,7 +16,7 @@ const io = require('socket.io')(http, options);
 const cors = require('cors');
 const connectedUser = {}
 
-io.origins(['http://localhost:4200']).on('connection', socket => {
+io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
         data.products.forEach(product => {
