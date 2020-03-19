@@ -1,7 +1,7 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-
+// server heroku https://doc-sockets.herokuapp.com/
 io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
