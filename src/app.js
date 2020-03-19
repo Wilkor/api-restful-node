@@ -2,7 +2,14 @@ const express = require("express");
 const app = express();
 const http = require('http').Server(app);
 
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+  path: '/console',
+  serveClient: false,
+  // below are engine.IO options
+  pingInterval: 10000,
+  pingTimeout: 5000,
+  cookie: false
+});
 const cors = require('cors');
 const connectedUser = {}
 
