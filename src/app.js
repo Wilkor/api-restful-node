@@ -3,7 +3,7 @@ const http = require('http').Server(app, { origins: '*:*'});
 const io = require('socket.io')(http);
 
 // server heroku https://doc-sockets.herokuapp.com/
-
+io.set('origins', '*:*');
 io.on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
