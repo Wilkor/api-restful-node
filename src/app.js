@@ -4,8 +4,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cors = require('cors');
 const connectedUser = {}
-io.origins(['*']);
-io.on('connection', socket => {
+
+io.origins(['*']).on('connection', socket => {
   socket.on("notification", data =>{
     if(data.profileType === "admin"){
         data.products.forEach(product => {
