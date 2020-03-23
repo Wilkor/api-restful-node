@@ -1,54 +1,48 @@
 const express = require("express");
 const app = express();
 const http = require('http').Server(app);
-
-const io = require('socket.io')(http, {
-  path: '/console',
-  serveClient: false,
-  // below are engine.IO options
-  pingInterval: 10000,
-  pingTimeout: 5000,
-  cookie: false
-});
+const io = require('socket.io')(http);
 const cors = require('cors');
-const connectedUser = {}
 
-io.origins((origin, callback) => {
-  if (origin !== 'http://localhost:4200/') {
-    return callback('origin not allowed', false);
-  }
-  callback(null, true);
-});
 
 io.on('connection', socket => {
+  
+  const productRooms =  findRooms => {
+    var availableRooms = [];
+    var rooms = io.sockets.adapter.rooms;
+    if (rooms) {
+        for (var room in rooms) {
+            if (!rooms[room].hasOwnProperty(room)) {
+                availableRooms.push(room);
+            }
+        }
+    }
+    return availableRooms;
+}
   socket.on("notification", data =>{
-    if(data.profileType === "admin"){
-        data.products.forEach(product => {
-            socket.join(product);
-            io.to(product).emit("broadcastMessage",'Você recebeu um aviso!');
-        });
+       const rooms =  productRooms()
+       data.products.forEach(product =>{
+         
+            if(rooms.includes(product)){
+                socket.broadcast.to(product).emit("responseLogin", {
+                 id: data.id,
+                 msg:', chegou um aviso para você! clique aqui para visualizar.' 
+                })
+            }
+     })
 
-    } else {
-        socket.to("admin").emit("broadcastMessage");
-    }
 });
 
-  socket.on("login", data =>{
-    if(data.profileType === "admin"){
-        data.products.forEach(product => {
-            socket.join(product);
-        });W
-
-    } else {
-        socket.to("admin").emit("broadcastMessage");
-    }
-});
-
+  socket.on("login", data => {
+       data.products.forEach(product => {
+       socket.join(product);
+      });
+    });
 });
 
 
 app.use(cors())
 app.use(express.json())
-http.listen(process.env.PORT || 3000, () => {
+http.listen(process.env.PORT || 4444, () => {
     console.log('Listening on port 4444');
 });
