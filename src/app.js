@@ -20,24 +20,30 @@ io.on('connection', socket => {
     return availableRooms;
 }
   socket.on("notification", data =>{
-       const rooms =  productRooms()
-       data.products.forEach(product =>{
-         
+       const rooms =  productRooms();
+       console.log(rooms);
+       let count = 0;
+
+       data.products.forEach( (product,index) => {
             if(rooms.includes(product)){
-                socket.broadcast.to(product).emit("responseLogin", {
+                //socket.broadcast
+                console.log('produto', index);
+              socket.broadcast.to(product).emit("responseLogin", {
                  id: data.id,
-                 msg:', chegou um aviso para você! clique aqui para visualizar.' 
+                 msg:', chegou um aviso para você! clique aqui para visualizar.' ,
+                 contador: index
                 })
-            }
-     })
-
+          } 
+     });
 });
-
   socket.on("login", data => {
+       console.log('repetições', data)
        data.products.forEach(product => {
        socket.join(product);
       });
     });
+
+    console.log(socket.adapter.rooms)
 });
 
 
